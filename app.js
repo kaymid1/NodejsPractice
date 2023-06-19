@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Dishes = require("./models/dishes");
-const url = "mongodb://localhost:27017/conFusion";
+var config = require("./config.js");
+const url = config.mongoUrl;
+// const url = "mongodb://localhost:27017/conFusion";
 const connect = mongoose.connect(url);
 var createError = require("http-errors");
 var express = require("express");

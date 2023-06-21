@@ -33,3 +33,4 @@ exports.jwtPassport = passport.use(
   })
 );
 exports.verifyUser = passport.authenticate("jwt", { session: false });
+exports.verifyAdmin = passport.authenticate("jwt", { session: false });

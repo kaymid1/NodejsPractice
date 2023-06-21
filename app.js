@@ -19,6 +19,7 @@ var session = require("express-session");
 var FileStore = require("session-file-store")(session);
 var passport = require("passport");
 var authenticate = require("./authenticate");
+const uploadRouter = require("./routes/uploadRouter");
 
 connect.then(
   (db) => {
@@ -55,6 +56,7 @@ app.use(passport.session());
 app.use("/dishes", dishRouter);
 app.use("/promotions", promoRouter);
 app.use("/leaders", leadersRouter);
+app.use("/imageUpload", uploadRouter);
 //cookie
 // app.use(cookieParser("12345-67890"));
 app.use(auth); // Require auth middleware function

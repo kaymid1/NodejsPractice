@@ -5,10 +5,34 @@ const bodyParser = require("body-parser");
 var User = require("../models/users");
 var passport = require("passport");
 var authenticate = require("../authenticate");
+const { verifyUser } = require("../authenticate");
+const { verifyAdmin } = require("../authenticate");
+const { verifyOrdinaryUser } = require("../authenticate");
 router.use(bodyParser.json());
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+router.get(
+  "/",
+  authenticate.verifyUser,
+  authenticate.verifyAdmin,
+  (req, res, next) => {
+    User.find({})
+      .then((users) => {
+        res.status(200).json(users);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+);
+//profile
+router.get("/profile", authenticate.verifyOrdinaryUser, (req, res) => {
+  // Access the authenticated user's profile
+  // The user object is available in req.user
+  const user = req.user;
+  const role = req.user.admin ? "Admin" : "User";
+  res.json({
+    message: `Welcome, ${role} ${user.username}! This is your profile.`,
+  });
 });
 
 //dang ki
@@ -52,11 +76,13 @@ router.post("/login", passport.authenticate("local"), (req, res) => {
   //   { username: req.user.username },
   //   "your-secret-key-goes-here"
   // );
+  // Check if the user has admin privileges
+  const role = req.user.admin ? "Admin" : "User";
   res.json({
     success: true,
+    role: role,
     token: token,
     status: "You are successfully logged in",
-    token,
   });
 });
 router.post("/login", (req, res, next) => {

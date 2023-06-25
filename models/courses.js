@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 mongoose.set("strictQuery", false);
-
-const commentSchema = new Schema(
+const reviewSchema = new Schema(
   {
     rating: {
       type: Number,
@@ -23,7 +22,7 @@ const commentSchema = new Schema(
     timestamps: true,
   }
 );
-const dishSchema = new Schema(
+const courseSchema = new Schema(
   {
     name: {
       type: String,
@@ -42,26 +41,18 @@ const dishSchema = new Schema(
       type: String,
       require: true,
     },
-    label: {
-      type: String,
-      default: "",
-    },
     price: {
       type: Number,
       required: true,
       min: 0,
     },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
-    comments: [commentSchema],
+    reviews: [reviewSchema],
   },
   {
     timestamps: true,
   }
 );
 
-var Dishes = mongoose.model("Dish", dishSchema);
-Dishes.collection.createIndex({ name: 1 }, { unique: true });
-module.exports = Dishes;
+var Courses = mongoose.model("Course", courseSchema);
+Courses.collection.createIndex({ name: 1 }, { unique: true });
+module.exports = Courses;

@@ -32,4 +32,51 @@ exports.jwtPassport = passport.use(
     });
   })
 );
-exports.verifyUser = passport.authenticate("jwt", { session: false });
+exports.verifyUser = (req, res, next) => {
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      const error = new Error("You are not authenticated!");
+      error.status = 401;
+      return next(error);
+    }
+    // Store the user's ID as the author
+    req.author = user._id;
+    next();
+  })(req, res, next);
+};
+
+exports.verifyAdmin = (req, res, next) => {
+  passport.authenticate("jwt", { session: false }, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user || !user.admin) {
+      const err = new Error(
+        "You are not authorized to perform this operation!"
+      );
+      err.status = 403; // Forbidden status code
+      return next(err);
+    }
+    next();
+  })(req, res, next);
+};
+exports.verifyOrdinaryUser = (req, res, next) => {
+  // Check if the user's token is valid and retrieve user information
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      // User authentication failed
+      const error = new Error("You are not authenticated!");
+      error.status = 401; // Unauthorized status code
+      return next(error);
+    }
+    // User authentication successful
+    req.user = user; // Assign the user object to the request object
+    next();
+  })(req, res, next);
+};

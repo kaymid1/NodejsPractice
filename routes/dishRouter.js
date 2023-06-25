@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const Dishes = require("../models/dishes");
+const Dishes = require("../models/courses");
 const dishRouter = express.Router();
 var authenticate = require("../authenticate");
 dishRouter.use(express.json());

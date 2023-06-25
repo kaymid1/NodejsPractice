@@ -15,7 +15,7 @@ promoRouter
     res.end("Will send all the promotions to you!");
   })
 
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.end(
       "Will add the promotions: " +
         req.body.name +
@@ -24,13 +24,17 @@ promoRouter
     );
   })
 
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /promotions");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    res.end("Deleting all promotions");
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      res.end("Deleting all promotions");
+    }
+  );
 promoRouter
   .route("/:promoId")
   .get((req, res, next) => {
@@ -38,13 +42,13 @@ promoRouter
       "Will send details of the promotions: " + req.params.promoId + " to you!"
     );
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end(
       "POST operation not supported on /promotions/" + req.params.promoId
     );
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.write("Updating the promotions: " + req.params.promoId + "\n");
     res.end(
       "Will update the promtions: " +
@@ -53,7 +57,11 @@ promoRouter
         req.body.description
     );
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    res.end("Deleting promotions: " + req.params.promoId);
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      res.end("Deleting promotions: " + req.params.promoId);
+    }
+  );
 module.exports = promoRouter;

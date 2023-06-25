@@ -10,8 +10,6 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const dishRouter = require("./routes/dishRouter");
-const promoRouter = require("./routes/promoRouter");
-const leadersRouter = require("./routes/leadersRouter");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var app = express();
@@ -53,10 +51,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/dishes", dishRouter);
-app.use("/promotions", promoRouter);
-app.use("/leaders", leadersRouter);
-//cookie
-// app.use(cookieParser("12345-67890"));
+
 app.use(auth); // Require auth middleware function
 
 function auth(req, res, next) {
@@ -71,22 +66,6 @@ function auth(req, res, next) {
   }
 }
 
-// function sessionAuth(req, res, next) {
-//   console.log(req.session);
-//   if (!req.session.user) {
-//     var err = new Error("You are not authenticated!");
-//     err.status = 403;
-//     return next(err);
-//   } else {
-//     if (req.session.user === "authenticated") {
-//       next();
-//     } else {
-//       var err = new Error("You are not authenticated!");
-//       err.status = 403;
-//       return next(err);
-//     }
-//   }
-// }
 app.use(function (req, res, next) {
   next(createError(404));
 });

@@ -49,16 +49,19 @@ exports.verifyUser = (req, res, next) => {
 };
 
 exports.verifyAdmin = (req, res, next) => {
-  // Check if the user is an Admin
-  if (req.user && req.user.admin) {
-    // User is an Admin, continue to the next middleware
+  passport.authenticate("jwt", { session: false }, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user || !user.admin) {
+      const err = new Error(
+        "You are not authorized to perform this operation!"
+      );
+      err.status = 403; // Forbidden status code
+      return next(err);
+    }
     next();
-  } else {
-    // User is not an Admin, return an error
-    const err = new Error("You are not authorized to perform this operation!");
-    err.status = 403; // Forbidden status code
-    return next(err);
-  }
+  })(req, res, next);
 };
 exports.verifyOrdinaryUser = (req, res, next) => {
   // Check if the user's token is valid and retrieve user information

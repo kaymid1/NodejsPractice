@@ -10,15 +10,20 @@ const { verifyAdmin } = require("../authenticate");
 const { verifyOrdinaryUser } = require("../authenticate");
 router.use(bodyParser.json());
 /* GET users listing. */
-router.get("/", verifyUser, verifyAdmin, (req, res, next) => {
-  User.find({})
-    .then((users) => {
-      res.status(200).json(users);
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
+router.get(
+  "/",
+  authenticate.verifyUser,
+  authenticate.verifyAdmin,
+  (req, res, next) => {
+    User.find({})
+      .then((users) => {
+        res.status(200).json(users);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+);
 //profile
 router.get("/profile", authenticate.verifyOrdinaryUser, (req, res) => {
   // Access the authenticated user's profile

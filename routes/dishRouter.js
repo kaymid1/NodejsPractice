@@ -73,7 +73,7 @@ dishRouter
   );
 dishRouter
   .route("/:dishId")
-  .options(cors.optionsWithOptions, (req, res) => {
+  .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
@@ -140,7 +140,7 @@ dishRouter
   );
 dishRouter
   .route("/:dishId/comments")
-  .options(cors.optionsWithOptions, (req, res) => {
+  .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   })
   .get(cors.cors, (res, req, next) => {
@@ -241,7 +241,7 @@ dishRouter
   );
 dishRouter
   .route("/:dishId/comments/:commentId")
-  .options(cors.optionsWithOptions, (req, res) => {
+  .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {

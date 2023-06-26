@@ -16,7 +16,7 @@ leadersRouter
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
-    res.end("Will send all the leaders to you!");
+    Leaders.find(req.quey);
   })
 
   .post(

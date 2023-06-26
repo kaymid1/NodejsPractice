@@ -16,7 +16,7 @@ promoRouter
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
-    res.end("Will send all the promotions to you!");
+    Promotions.find(req.query);
   })
 
   .post(

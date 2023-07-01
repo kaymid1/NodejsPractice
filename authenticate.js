@@ -5,9 +5,10 @@ var JwtStrategy = require("passport-jwt").Strategy;
 var ExtraJwt = require("passport-jwt").ExtractJwt;
 var jwt = require("jsonwebtoken"); // used to create, sign , and verify token
 var config = require("./config.js");
+var FacebookTokenStrategy = require("passport-facebook-token");
 const { ExtractJwt } = require("passport-jwt");
 
-passport.use(new LocalStrategy(User.authenticate()));
+exports.local = passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -80,3 +81,37 @@ exports.verifyOrdinaryUser = (req, res, next) => {
     next();
   })(req, res, next);
 };
+
+exports.facebookPassport = passport.use(
+  new FacebookTokenStrategy(
+    {
+      clientID: config.facebook.clientId,
+      clientSecret: config.facebook.clientSecret,
+    },
+    (accessToken, refreshToken, profile, done) => {
+      User.findOne({ facebookId: profile.id })
+        .then((user) => {
+          if (user) {
+            return done(null, user);
+          } else {
+            // Create a new user since the user does not exist in the database
+            User.create({
+              username: profile.displayName,
+              facebookId: profile.id,
+              firstname: profile.name.givenName,
+              lastname: profile.name.familyName,
+            })
+              .then((user) => {
+                return done(null, user);
+              })
+              .catch((err) => {
+                return done(err, false);
+              });
+          }
+        })
+        .catch((err) => {
+          return done(err, false);
+        });
+    }
+  )
+);

@@ -86,9 +86,10 @@ router.post("/login", passport.authenticate("local"), (req, res) => {
   });
 });
 router.post("/login", (req, res, next) => {
+  // Check if the user is already authenticated
   if (!req.session.user) {
+    // Check for basic authentication header
     var authHeader = req.headers.authorization;
-
     if (!authHeader) {
       var err = new Error("You are not authenticated!");
       res.setHeader("WWW-Authenticate", "Basic");
@@ -126,7 +127,6 @@ router.post("/login", (req, res, next) => {
     res.end("You are already authenticated!");
   }
 });
-
 router.get("/logout", (req, res) => {
   if (req.session) {
     req.session.destroy();
@@ -138,5 +138,35 @@ router.get("/logout", (req, res) => {
     next(err);
   }
 });
+
+router.get(
+  "/facebook/token",
+  passport.authenticate("facebook-token"),
+  (req, res) => {
+    if (req.user) {
+      try {
+        var token = authenticate.getToken({ _id: req.user._id });
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json({
+          success: true,
+          token: token,
+          status: "You are successfully logged in!",
+        });
+      } catch (err) {
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "application/json");
+        res.json({
+          success: false,
+          status: "An error occurred during token generation.",
+        });
+      }
+    } else {
+      res.statusCode = 401;
+      res.setHeader("Content-Type", "application/json");
+      res.json({ success: false, status: "Authentication failed." });
+    }
+  }
+);
 
 module.exports = router;

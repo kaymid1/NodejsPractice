@@ -12,6 +12,7 @@ var logger = require("morgan");
 const dishRouter = require("./routes/dishRouter");
 const promoRouter = require("./routes/promoRouter");
 const leadersRouter = require("./routes/leadersRouter");
+const favouriteRouter = require("./routes/favouriteRouter");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var app = express();
@@ -19,7 +20,11 @@ var session = require("express-session");
 var FileStore = require("session-file-store")(session);
 var passport = require("passport");
 var authenticate = require("./authenticate");
-
+var commentRouter = require("./routes/commentRouter");
+const port = 8000; // Specify the port you want to use
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 connect.then(
   (db) => {
     console.log("Connected to the server");
@@ -55,6 +60,8 @@ app.use(passport.session());
 app.use("/dishes", dishRouter);
 app.use("/promotions", promoRouter);
 app.use("/leaders", leadersRouter);
+app.use("/favourites", favouriteRouter);
+app.use("/comments", commentRouter);
 //cookie
 // app.use(cookieParser("12345-67890"));
 app.use(auth); // Require auth middleware function

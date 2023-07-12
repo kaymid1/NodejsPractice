@@ -1,27 +1,28 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const mongoose = require("mongoose");
 const cors = require("./cors");
 
-const Promotions = require("../models/promotions");
+const Leaders = require("../models/leaders");
 var authenticate = require("../authenticate");
 
-const promoRouter = express.Router();
+const leaderRouter = express.Router();
 
-promoRouter.use(bodyParser.json());
+leaderRouter.use(bodyParser.json());
 
-promoRouter
+leaderRouter
   .route("/")
   .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
-    Promotions.find(req.query)
+    Leaders.find(req.query)
       .then(
-        (promotions) => {
+        (leaders) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(promotions);
+          res.json(leaders);
         },
         (err) => next(err)
       )
@@ -32,13 +33,13 @@ promoRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotions.create(req.body)
+      Leaders.create(req.body)
         .then(
-          (promotion) => {
-            console.log("Promotion Created ", promotion);
+          (leader) => {
+            console.log("Leader Created ", leader);
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
-            res.json(promotion);
+            res.json(leader);
           },
           (err) => next(err)
         )
@@ -51,7 +52,7 @@ promoRouter
     authenticate.verifyAdmin,
     (req, res, next) => {
       res.statusCode = 403;
-      res.end("PUT operation not supported on /promotions");
+      res.end("PUT operation not supported on /leaders");
     }
   )
   .delete(
@@ -59,7 +60,7 @@ promoRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotions.remove({})
+      Leaders.remove({})
         .then(
           (resp) => {
             res.statusCode = 200;
@@ -72,18 +73,18 @@ promoRouter
     }
   );
 
-promoRouter
-  .route("/:promoId")
+leaderRouter
+  .route("/:leaderId")
   .options(cors.corsWithOptions, (req, res) => {
     res.sendStatus(200);
   })
   .get(cors.cors, (req, res, next) => {
-    Promotions.findById(req.params.promoId)
+    Leaders.findById(req.params.leaderId)
       .then(
-        (promotion) => {
+        (leader) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(promotion);
+          res.json(leader);
         },
         (err) => next(err)
       )
@@ -96,7 +97,7 @@ promoRouter
     (req, res, next) => {
       res.statusCode = 403;
       res.end(
-        "POST operation not supported on /promotions/" + req.params.promoId
+        "POST operation not supported on /leaders/" + req.params.leaderId
       );
     }
   )
@@ -105,18 +106,18 @@ promoRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotions.findByIdAndUpdate(
-        req.params.promoId,
+      Leaders.findByIdAndUpdate(
+        req.params.leaderId,
         {
           $set: req.body,
         },
         { new: true }
       )
         .then(
-          (promotion) => {
+          (leader) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
-            res.json(promotion);
+            res.json(leader);
           },
           (err) => next(err)
         )
@@ -128,7 +129,7 @@ promoRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotions.findByIdAndRemove(req.params.promoId)
+      Leaders.findByIdAndRemove(req.params.leaderId)
         .then(
           (resp) => {
             res.statusCode = 200;
@@ -141,4 +142,4 @@ promoRouter
     }
   );
 
-module.exports = promoRouter;
+module.exports = leaderRouter;

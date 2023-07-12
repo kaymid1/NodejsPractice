@@ -3,9 +3,13 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 var authenticate = require("../authenticate");
 const cors = require("./cors");
+
 const Comments = require("../models/comments");
+
 const commentRouter = express.Router();
+
 commentRouter.use(bodyParser.json());
+
 commentRouter
   .route("/")
   .options(cors.corsWithOptions, (req, res) => {
@@ -68,6 +72,7 @@ commentRouter
         .catch((err) => next(err));
     }
   );
+
 commentRouter
   .route("/:commentId")
   .options(cors.corsWithOptions, (req, res) => {
@@ -107,7 +112,9 @@ commentRouter
             req.body.author = req.user._id;
             Comments.findByIdAndUpdate(
               req.params.commentId,
-              { $set: req.body },
+              {
+                $set: req.body,
+              },
               { new: true }
             ).then(
               (comment) => {
@@ -163,4 +170,5 @@ commentRouter
       )
       .catch((err) => next(err));
   });
+
 module.exports = commentRouter;

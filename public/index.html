@@ -1,7 +1,82 @@
-<!DOCTYPE html>
 <html>
+  <head>
+    <title>This is index.html</title>
+  </head>
+
   <body>
     <h1>Index.html</h1>
     <p>This is the contents of this file</p>
+
+    <div id="status"></div>
+
+    <!-- Load the JS SDK asynchronously -->
+    <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0&appId=1130201878382713&autoLogAppEvents=1"
+    ></script>
+
+    <script>
+      // This is called with the results from FB.getLoginStatus().
+      function statusChangeCallback(response) {
+        console.log("statusChangeCallback");
+        console.log(response);
+
+        if (response.status === "connected") {
+          // Logged into your app and Facebook.
+          testAPI();
+        } else {
+          // The person is not logged into your app or we are unable to tell.
+          document.getElementById("status").innerHTML =
+            "Please log into this app.";
+        }
+      }
+
+      // This function is called when someone finishes with the Login Button.
+      function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+          statusChangeCallback(response);
+        });
+      }
+
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: "1130201878382713",
+          cookie: true,
+          xfbml: true,
+          version: "v17.0",
+        });
+
+        FB.AppEvents.logPageView();
+
+        // Now that we've initialized the JavaScript SDK, we call FB.getLoginStatus().
+        FB.getLoginStatus(function (response) {
+          statusChangeCallback(response);
+        });
+      };
+
+      // Here we run a very simple test of the Graph API after login is successful.
+      function testAPI() {
+        console.log("Welcome! Fetching your information....");
+        FB.api("/me", function (response) {
+          console.log("Successful login for: " + response.name);
+          document.getElementById("status").innerHTML =
+            "Thanks for logging in, " + response.name + "!";
+        });
+      }
+    </script>
+
+    <!-- Facebook Login Button -->
+    <div
+      class="fb-login-button"
+      data-width=""
+      data-size=""
+      data-button-type=""
+      data-layout=""
+      data-auto-logout-link="false"
+      data-use-continue-as="false"
+      onlogin="checkLoginState()"
+    ></div>
   </body>
 </html>

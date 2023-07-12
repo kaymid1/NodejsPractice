@@ -11,10 +11,11 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const dishRouter = require("./routes/dishRouter");
 const promoRouter = require("./routes/promoRouter");
-const leadersRouter = require("./routes/leadersRouter");
-const favouriteRouter = require("./routes/favouriteRouter");
+const leadersRouter = require("./routes/leaderRouter");
+const favoriteRouter = require("./routes/favoriteRouter");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+const cors = require("cors");
 var app = express();
 var session = require("express-session");
 var FileStore = require("session-file-store")(session);
@@ -43,6 +44,15 @@ app.use(
     store: new FileStore(),
   })
 );
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  next();
+});
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
@@ -51,7 +61,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+// Enable CORS middleware
+app.use(cors());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use(passport.initialize());
@@ -60,7 +71,7 @@ app.use(passport.session());
 app.use("/dishes", dishRouter);
 app.use("/promotions", promoRouter);
 app.use("/leaders", leadersRouter);
-app.use("/favourites", favouriteRouter);
+app.use("/favorites", favoriteRouter);
 app.use("/comments", commentRouter);
 //cookie
 // app.use(cookieParser("12345-67890"));

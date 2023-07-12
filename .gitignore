@@ -1,2 +1,7 @@
 node_modules/
 env/
+
+.config.js
+.cert.csr
+.certificate.pem
+.private.key
